@@ -34,6 +34,8 @@ use PITS\Deepltranslate\Domain\Repository\DeeplSettingsRepository;
 use PITS\Deepltranslate\Service\DeeplService;
 use PITS\Deepltranslate\Service\GoogleTranslateService;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TranslateHook
@@ -98,9 +100,26 @@ class TranslateHook
             }
 
             if ($sourceLanguage == null) {
+                // Make good defaults
                 $sourceLanguageIso = 'en';
                 //choose between default and autodetect
                 $deeplSourceIso = ($sourceLanguageCode == 'auto' ? null : 'EN');
+
+                // Try to find the default language from the site configuration
+                if (isset($tablename) && isset($currectRecordId)) {
+                    $currentRecord = BackendUtility::getRecord($tablename, (int)$currectRecordId);
+                    $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+                    try {
+                        $site = $siteFinder->getSiteByPageId($currentRecord['pid']);
+                        $language = $site->getDefaultLanguage();
+                        $sourceLanguageIso = strtolower($language->getTwoLetterIsoCode());
+                        if ($sourceLanguageCode !== 'auto') {
+                            $deeplSourceIso = strtoupper($sourceLanguageIso);
+                        }
+                    } catch (SiteNotFoundException $exception) {
+                        // Ignore, use defaults
+                    }
+                }
             } else {
                 $sourceLanguageMapping = $this->deeplSettingsRepository->getMappings($sourceLanguage['uid']);
                 if ($sourceLanguageMapping != null) {
