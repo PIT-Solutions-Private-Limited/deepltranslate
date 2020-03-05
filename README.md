@@ -16,7 +16,7 @@ Once installed ,there appears a Deepl back end module with a settings tab.
 
 ## Extension Configuartion
 
-Once you installed the extension, you have to set the Deepl API Key under extension configuration section
+Once you installed the extension, you have to set the Deepl API Key under ADMIN TOOL->Settings->Extension Configuration  section
 
 
 ## Translating content elements
