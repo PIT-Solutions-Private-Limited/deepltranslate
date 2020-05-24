@@ -24,10 +24,8 @@ namespace PITS\Deepltranslate\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use PITS\Deepltranslate\Domain\Repository\DeeplSettingsRepository;
-use PITS\Deepltranslate\Service\DeeplService;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Annotation\Inject;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
  * Class SettingsController
@@ -55,14 +53,13 @@ class SettingsController extends ActionController
 
     /**
      * Default action
-     * @return void
      */
     public function indexAction()
     {
         $args = $this->request->getArguments();
         if (!empty($args) && $args['redirectFrom'] == 'savesetting') {
             $successMessage = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('settings_success', 'Deepl');
-            $this->pageRenderer->addJsInlineCode("success", "top.TYPO3.Notification.success('Saved', '" . $successMessage . "');");
+            $this->pageRenderer->addJsInlineCode('success', "top.TYPO3.Notification.success('Saved', '" . $successMessage . "');");
         }
 
         $sysLanguages = $this->deeplSettingsRepository->getSysLanguages();
@@ -79,7 +76,6 @@ class SettingsController extends ActionController
 
     /**
      * save language assignments
-     * @return void
      */
     public function saveSettingsAction()
     {
@@ -103,7 +99,6 @@ class SettingsController extends ActionController
         }
         $args['redirectFrom'] = 'savesetting';
         $this->redirect('index', 'Settings', 'Deepl', $args);
-
     }
 
     /**
@@ -127,5 +122,4 @@ class SettingsController extends ActionController
         }
         return $table;
     }
-
 }

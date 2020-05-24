@@ -55,7 +55,7 @@ class DeeplService
      * Default supported languages
      * @var array
      */
-    public $apiSupportedLanguages = ['EN', 'DE', 'FR', 'ES', 'IT', 'NL', 'PL' ,'RU', 'PT'];
+    public $apiSupportedLanguages = ['EN', 'DE', 'FR', 'ES', 'IT', 'NL', 'PL' , 'RU', 'PT'];
 
     /**
      * @var RequestFactory
@@ -74,14 +74,13 @@ class DeeplService
     public function __construct()
     {
         $extConf                       = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['deepltranslate']);
-        
+
         $this->deeplSettingsRepository = GeneralUtility::makeInstance(DeeplSettingsRepository::class);
         $this->requestFactory          = GeneralUtility::makeInstance(RequestFactory::class);
 
         $this->apiUrl                  = $extConf['apiUrl'];
         $this->apiKey                  = $extConf['apiKey'];
         $this->apiSupportedLanguages   = $this->deeplSettingsRepository->getSupportedLanguages($this->apiSupportedLanguages);
-        
     }
 
     /**
@@ -119,5 +118,4 @@ class DeeplService
         }
         return json_decode($response->getBody()->getContents());
     }
-
 }
