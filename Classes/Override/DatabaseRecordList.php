@@ -16,8 +16,6 @@ namespace PITS\Deepltranslate\Override;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class for rendering of Web>List module
@@ -74,10 +72,9 @@ class DatabaseRecordList extends \TYPO3\CMS\Recordlist\RecordList\DatabaseRecord
             }
 
             if ($lNew) {
-
                 $uid = "'" . $row['uid'] . "'";
                 $table = "'$table'";
-                $lNew .= '<a data-state="hidden" href="#" data-params="data[$table][$uid][hidden]=0" ><label class="btn btn-default btn-checkbox deepl-btn-wrap"><input class="deepl-button" id="deepl-translation-enable-'.$row["uid"].'" type="checkbox" name="data[deepl.enable]" onclick="deeplTranslate('.$table.','.$uid.')" /><span></span></label></a>';
+                $lNew .= '<a data-state="hidden" href="#" data-params="data[$table][$uid][hidden]=0" ><label class="btn btn-default btn-checkbox deepl-btn-wrap"><input class="deepl-button" id="deepl-translation-enable-' . $row['uid'] . '" type="checkbox" name="data[deepl.enable]" onclick="deeplTranslate(' . $table . ',' . $uid . ')" /><span></span></label></a>';
 
                 $out[1] .= $lNew;
             }

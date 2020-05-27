@@ -90,7 +90,7 @@ class TranslateHook
             $langParam          = explode('-', $cmdmap['localization']['custom']['srcLanguageId']);
             $sourceLanguageCode = $langParam[0];
             $targetLanguage     = BackendUtility::getRecord('sys_language', $languageRecord['uid']);
-            $sourceLanguage     = BackendUtility::getRecord('sys_language', (int) $sourceLanguageCode);
+            $sourceLanguage     = BackendUtility::getRecord('sys_language', (int)$sourceLanguageCode);
             //get target language mapping if any
             $targetLanguageMapping = $this->deeplSettingsRepository->getMappings($targetLanguage['uid']);
             if ($targetLanguageMapping != null) {
@@ -116,12 +116,10 @@ class TranslateHook
             if ($customMode == 'deepl') {
                 //if target language and source language among supported languages
                 if (in_array(strtoupper($targetLanguage['language_isocode']), $this->deeplService->apiSupportedLanguages)) {
-
                     if ($tablename == 'tt_content') {
                         $response = $this->deeplService->translateRequest($content, $targetLanguage['language_isocode'], $deeplSourceIso);
-
                     } else {
-                        $currentRecord     = BackendUtility::getRecord($tablename, (int) $currectRecordId);
+                        $currentRecord     = BackendUtility::getRecord($tablename, (int)$currectRecordId);
                         $selectedTCAvalues = $this->getTemplateValues($currentRecord, $tablename, $field, $content);
 
                         if (!empty($selectedTCAvalues)) {
@@ -142,9 +140,8 @@ class TranslateHook
             elseif ($customMode == 'google') {
                 if ($tablename == 'tt_content') {
                     $response = $this->googleService->translate($deeplSourceIso, $targetLanguage['language_isocode'], $content);
-
                 } else {
-                    $currentRecord     = BackendUtility::getRecord($tablename, (int) $currectRecordId);
+                    $currentRecord     = BackendUtility::getRecord($tablename, (int)$currectRecordId);
                     $selectedTCAvalues = $this->getTemplateValues($currentRecord, $tablename, $field, $content);
 
                     if (!empty($selectedTCAvalues)) {
@@ -190,18 +187,18 @@ class TranslateHook
         }
         //inline js for adding deepl button on records list.
         if (TYPO3_MODE == 'BE') {
-          $hook['jsInline']['RecordListInlineJS']['code'] .= "function deeplTranslate(a,b){ $('#deepl-translation-enable-' + b).parent().parent().siblings().each(function() { var testing = $( this ).attr( 'href' ); if(document.getElementById('deepl-translation-enable-' + b).checked == true){ var newUrl = $( this ).attr( 'href' , testing + '&cmd[localization][custom][mode]=deepl'); } else { var newUrl = $( this ).attr( 'href' , testing + '&cmd[localization][custom][mode]=deepl'); } }); }";
+            $hook['jsInline']['RecordListInlineJS']['code'] .= "function deeplTranslate(a,b){ $('#deepl-translation-enable-' + b).parent().parent().siblings().each(function() { var testing = $( this ).attr( 'href' ); if(document.getElementById('deepl-translation-enable-' + b).checked == true){ var newUrl = $( this ).attr( 'href' , testing + '&cmd[localization][custom][mode]=deepl'); } else { var newUrl = $( this ).attr( 'href' , testing + '&cmd[localization][custom][mode]=deepl'); } }); }";
         }
     }
 
     /**
      * check whether the string contains html
      * @param type $string
-     * @return boolean
+     * @return bool
      */
     public function isHtml($string)
     {
-        return preg_match("/<[^<]+>/", $string, $m) != 0;
+        return preg_match('/<[^<]+>/', $string, $m) != 0;
     }
 
     /**
@@ -212,7 +209,7 @@ class TranslateHook
     public function stripSpecificTags($tags, $content)
     {
         foreach ($tags as $tag) {
-            $content = preg_replace("/<\\/?" . $tag . "(.|\\s)*?>/", '', $content);
+            $content = preg_replace('/<\\/?' . $tag . '(.|\\s)*?>/', '', $content);
         }
         return $content;
     }
@@ -222,11 +219,10 @@ class TranslateHook
      * @param array $recorddata
      * @param string $table
      * @param string $field
-     * @return void
      */
     public function getTemplateValues($recorddata, $table, $field, $content)
     {
-        $rootLineUtility = GeneralUtility::makeInstance('TYPO3\CMS\Core\Utility\RootlineUtility',$recorddata['pid']);
+        $rootLineUtility = GeneralUtility::makeInstance('TYPO3\CMS\Core\Utility\RootlineUtility', $recorddata['pid']);
         $rootLine = $rootLineUtility->get();
         $TSObj           = GeneralUtility::makeInstance('TYPO3\CMS\Core\TypoScript\TemplateService');
         $TSObj->tt_track = 0;
@@ -242,5 +238,4 @@ class TranslateHook
             }
         }
     }
-
 }
