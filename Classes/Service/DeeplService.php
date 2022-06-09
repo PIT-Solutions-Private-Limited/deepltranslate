@@ -31,6 +31,7 @@ namespace PITS\Deepltranslate\Service;
  ***************************************************************/
 use GuzzleHttp\Exception\ClientException;
 use PITS\Deepltranslate\Domain\Repository\DeeplSettingsRepository;
+use TYPO3\CMS\Extbase\Configuration\BackendConfigurationManager;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -96,11 +97,15 @@ class DeeplService
             'target_lang'  => urlencode($targetLanguage),
             'tag_handling' => urlencode('xml'),
         ];
+
+        $this->addGlossary($postFields, $sourceLanguage, $targetLanguage);
+
         //url-ify the data to get content length
+        $postFieldString = '';
         foreach ($postFields as $key => $value) {
             $postFieldString .= $key . '=' . $value . '&';
         }
-        rtrim($postFieldString, '&');
+        $postFieldString = rtrim($postFieldString, '&');
         $contentLength = mb_strlen($postFieldString, '8bit');
 
         try {
@@ -117,5 +122,23 @@ class DeeplService
             exit;
         }
         return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * Adds glossary support to the request.
+     *
+     * @param array $postFields
+     * @param string $sourceLanguage
+     * @param string $targetLanguage
+     */
+    protected function addGlossary(array &$postFields, string $sourceLanguage, string $targetLanguage)
+    {
+        $configuration = GeneralUtility::makeInstance(BackendConfigurationManager::class)->getConfiguration(
+            'wvdeepltranslate'
+        );
+        $languageKey = strtolower($sourceLanguage . '-' . $targetLanguage);
+        if (isset($configuration['settings']['glossaries'][$languageKey])) {
+            $postFields['glossary_id'] = $configuration['settings']['glossaries'][$languageKey];
+        }
     }
 }
